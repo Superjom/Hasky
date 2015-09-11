@@ -1,5 +1,5 @@
 /*
- * mat.hpp
+ * dataframe.h
  *
  *  Created on: Sep 11, 2015
  *      Author: Superjom
@@ -10,16 +10,15 @@
 #include "vec.h"
 
 template <typename T>
-class Mat {
+class DataFrame {
 public:
     typedef T value_type;
     typedef Vec<T> vec_t;
+    typedef DataFrame<T> self_t;
+    typedef vector<T> data_t;
 
-    explicit Mat() { }
-    explicit Mat(const shape_t &shape) {
-        set_shape(shape); 
-    }
-    explicit Mat(int size, int width) {
+    explicit DataFrame() { }
+    explicit DataFrame(int size, int width) {
         set_shape(shape_t(size, width)); 
     }
 
@@ -41,7 +40,9 @@ public:
     const shape_t& shape() const {
         return _shape;
     }
-    
+    data_t& data() {
+        return _data;
+    }
     vec_t& operator[] (int id) {
         CHECK_GE(id, 0);
         CHECK_LT(id, _shape.size);

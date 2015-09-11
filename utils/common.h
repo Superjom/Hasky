@@ -29,4 +29,9 @@ struct shape_t {
         this->size = size;
         this->width = width;
     }
+
+    friend ostream& operator<< (ostream& os, const shape_t &shape) {
+        os << shape.size << " " << shape.width;
+        return os;
+    }
 };
