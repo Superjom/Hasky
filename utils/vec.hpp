@@ -10,9 +10,10 @@
 #define UTILS_VEC_HPP_
 #include "common.hpp"
 
+template <typename T>
 class Vec {
 public:
-    typedef double value_type;
+    typedef T value_type;
 
     Vec() {
     }
@@ -34,9 +35,7 @@ public:
             }
             init(other.size());
         }
-        for(size_t i = 0; i < size(); i++) {
-            data()[i] = other[i];
-        }
+        memcpy(data(), other.data(), sizeof(value_type) * size());
     }
 
     Vec(Vec&& other) {
@@ -264,8 +263,6 @@ private:
     value_type *_data = NULL;
     size_t _size;
 };  // class Vec
-
-
 
 
 #endif /* UTILS_VEC_HPP_ */
