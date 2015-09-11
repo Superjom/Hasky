@@ -8,7 +8,7 @@
 
 #ifndef UTILS_VEC_HPP_
 #define UTILS_VEC_HPP_
-#include "common.hpp"
+#include "common.h"
 
 template <typename T>
 class Vec {

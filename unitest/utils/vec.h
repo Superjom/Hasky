@@ -1,4 +1,4 @@
-#include "../../utils/vec.hpp"
+#include "../../utils/vec.h"
 #include <climits>
 #include "gtest/gtest.h"
 
