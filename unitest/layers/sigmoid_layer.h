@@ -2,7 +2,7 @@
 #include "gtest/gtest.h"
 #include "../../layers/sigmoid_layer.h"
 
-TEST(sigmoid_layer, init) {
+TEST(sigmoid_layer, setup) {
     SigmoidLayer<float> layer;
     shape_t shape(2, 3);
     layer.set_name("sigmoid-layer");
@@ -12,3 +12,5 @@ TEST(sigmoid_layer, init) {
     ASSERT_EQ(layer.param().z.size(), shape.size);
     ASSERT_EQ(layer.param().loss.size(), shape.size);
 }
+
+TEST(sigmoid_layer, 
