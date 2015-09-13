@@ -80,7 +80,7 @@ public:
 
     void init(size_t size, bool random_init = false) {
         CHECK_GT(size, 0);
-        CHECK(! _data) << "data can be inited only once";
+        CHECK_EQ(_data, static_cast<value_type*>(NULL)) << "data can be inited only once";
         //_data.reset(new value_type[size]);
         reset(size);
         for(size_t i = 0; i < _size; ++i) {
@@ -239,6 +239,9 @@ public:
 		}
 		return a;
 	}
+    bool empty() const {
+        return size() == 0;
+    }
 
 
 protected:
@@ -261,7 +264,7 @@ protected:
 private:
     //std::unique_ptr<value_type[]> _data;
     value_type *_data = NULL;
-    size_t _size;
+    size_t _size = 0;
 };  // class Vec
 
 

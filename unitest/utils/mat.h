@@ -5,6 +5,7 @@
 TEST(mat, init) {
     Mat<float> mat;
 }
+/*
 TEST(mat, shape) {
     shape_t shape1(3, 2);
     Mat<float> mat(shape1);
@@ -25,3 +26,4 @@ TEST(mat, assign) {
 
     ASSERT_EQ(mat[0][1], 1);
 }
+*/

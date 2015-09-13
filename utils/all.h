@@ -11,3 +11,4 @@
 #include "vec.h"
 #include "mat.h"
 #include "random.h"
+#include "math.h"
