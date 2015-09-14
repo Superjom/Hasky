@@ -11,12 +11,15 @@ inline T diff_sigmoid(T x) {
 
 template<typename T>
 inline T tanh(T x) {
-    float ex = exp(x);
-    float e_x = 1. / ex;
+    T ex = exp(x);
+    T e_x = 1. / ex;
     return (ex - e_x) / (ex + e_x);
 }
-
+/*
+ * Attention: tanhx = tanh(x)
+ */
 template<typename T>
-inline T diff_tanh(T x) {
+inline T diff_tanh(T tanhx) {
+    return 1. - tanhx * tanhx;
 }
 

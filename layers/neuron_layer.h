@@ -12,7 +12,8 @@
 template<typename T>
 class NeuronLayer : public Layer<T> {
 public:
-    typedef typename Layer<T>::vec_t vec_t;
+    typedef typename Layer<T>::vec_t    vec_t;
+    typedef typename Layer<T>::param_t  param_t;
 
     NeuronLayer<T>() { }
 
@@ -31,9 +32,10 @@ public:
             this->gaus_dist().fill(vec);
     }
     /*
-     * from top's loss to bottom's loss
+     * from bottom's z to top's z
      */
-    virtual void forward(vec_t& bottom) {
+    virtual void forward(param_t& bottom_) {
+        auto& bottom = bottom_.z;
         auto& top = this->param().z;
         CHECK(! bottom.empty());
         CHECK(! top.empty());
@@ -50,8 +52,9 @@ public:
      * top: top loss
      * bottom: bottom input
      */
-    virtual void backward(vec_t& top) {
+    virtual void backward(param_t& top_) {
         // update x
+        auto& top = top_.loss;
         auto& bottom = this->param().loss;
         T* loss = &this->param().loss[0];
         // TODO assert loss == 0 ? 

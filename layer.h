@@ -41,14 +41,14 @@ public:
     }
 
     virtual void setup(cvshape_t& shapes) = 0;
-    virtual void forward(vec_t& bottom) = 0;
+    virtual void forward(param_t& bottom) = 0;
     /*
      * top: top gradient
      * bottom: bottom gradient
      *
      * top gradient * cur_grad -> bottom gradient
      */
-    virtual void backward(vec_t& top) = 0;
+    virtual void backward(param_t& top) = 0;
     /*
      * add current layer's loss to it's parameter
      */

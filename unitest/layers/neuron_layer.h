@@ -23,7 +23,9 @@ TEST(neuron_layer, forward) {
     layer.gaus_dist().init(0, 0.5);
     layer.setup(shapes);
     LOG(INFO) << "forward ..";
-    Vec<float> bottom(3);
+    NeuronLayer<float>::param_t bottom_;
+    auto& bottom = bottom_.z;
+    bottom.init(3);
     bottom[0] = 1;
     bottom[1] = 2;
     bottom[2] = 3;
@@ -32,7 +34,7 @@ TEST(neuron_layer, forward) {
         LOG(INFO) << "param:\tw" << i << "\t"  << layer.param().w[i];
     }
 
-    layer.forward(bottom);
+    layer.forward(bottom_);
 
     for (int i = 0; i < shape.size; i++) {
         LOG(INFO) << "z:\t" <<i << "\t" << layer.param().z[i];
@@ -48,9 +50,11 @@ TEST(neuron_layer, backward) {
     layer.setup(shapes);
 
     CHECK_EQ(layer.param().loss.size(), 2); 
-    Vec<float> top_loss(2);
+    NeuronLayer<float>::param_t top;
+    auto& top_loss = top.loss;
+    top_loss.init(2);
     top_loss[0] = 1; top_loss[1] = 2;
-    layer.backward(top_loss);
+    layer.backward(top);
 
     for (int i = 0; i < shape.size; i++) {
         LOG(INFO) << i << "th" << "\t" << layer.param().loss[i];
