@@ -1,6 +1,7 @@
 #include <climits>
 #include "gtest/gtest.h"
-#include "../../layers/sigmoid_layer.h"
+//#include "../../layers/sigmoid_layer.h"
+#include "../../layers/map_layer.h"
 
 TEST(sigmoid_layer, setup) {
     SigmoidLayer<float> layer;
@@ -13,4 +14,23 @@ TEST(sigmoid_layer, setup) {
     ASSERT_EQ(layer.param().loss.size(), shape.size);
 }
 
-TEST(sigmoid_layer, 
+TEST(sigmoid_layer, forward) {
+    SigmoidLayer<float> layer;
+    shape_t shape(5, 5);
+    layer.set_name("sigmoid-layer");
+    vector<shape_t> shapes = {shape};
+    layer.setup(shapes);
+
+    SigmoidLayer<float>::vec_t x(shape.size);
+    for (int i = 0; i < shape.size; i++) {
+        x[i] = i+1;
+    }
+
+    layer.forward(x);
+    LOG(INFO) << "forward z:\t" << layer.param().z;
+
+    layer.backward(x);
+    LOG(INFO) << "backward loss:\t" << layer.param().loss;
+
+
+}
