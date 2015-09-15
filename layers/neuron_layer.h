@@ -26,7 +26,7 @@ public:
         CHECK(this->param().w.empty());
         this->param().w.set_shape(shape);
         this->param().z.init(shape.size);
-        this->param().loss.init(shape.size);
+        this->param().loss.init(shape.width);
         // random init
         for (auto& vec : this->param().w.data()) 
             this->gaus_dist().fill(vec);
@@ -44,7 +44,6 @@ public:
         CHECK_EQ(bottom.size(), this->param().w[0].size());
         // compute
         for(int i = 0; i < top.size(); i++) {
-            LOG(INFO) << i << "th";
             top[i] = bottom.dot( this->param().w[i]);
         }
     }
@@ -56,19 +55,26 @@ public:
         // update x
         auto& top = top_.loss;
         auto& bottom = this->param().loss;
-        T* loss = &this->param().loss[0];
+        bottom.clear();
+        auto& w = this->param().w;
+        CHECK_EQ(top.size(), w.size());
+        CHECK_EQ(bottom.size(), w[0].size());
         // TODO assert loss == 0 ? 
-        for (int i = 0; i < this->param().loss.size(); i++) {
+        for (int i = 0; i < bottom.size(); i++) {
             for (int j = 0; j < top.size(); j++) {
-                loss[i] += this->param().w[j][i] * top[i];
+                // TODO assign loss or accumulate loss ? 
+                bottom[i] += w[j][i] * top[j];
             }
         }
         // update weight
-        for (int i = 0; i < this->param().loss.size(); i++) {
+        // TODO update weight !
+        /*
+        for (int i = 0; i < bottom.size(); i++) {
             for (int j = 0; j < top.size(); j++) {
-                this->param().w[j][i] -= this->learning_rate * bottom[i];
+                w[j][i] -= this->learning_rate * bottom[i];
             }
         }
+        */
     }
 
     virtual void update() {

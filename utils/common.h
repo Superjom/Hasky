@@ -21,6 +21,8 @@ typedef unsigned int            uint;
 typedef vector<shape_t>         vshape_t;
 typedef const vector<shape_t>   cvshape_t;
 
+const float EPISILON = 1e-4;
+
 struct shape_t {
     uint size = -1;
     uint width = -1;

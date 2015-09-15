@@ -16,6 +16,7 @@ struct LayerParam {
 
     vec_t z;
     vec_t loss;
+    vec_t label;    // used by loss layer
     df_t w; 
     //DataFrame<value_type> bottom;
 };

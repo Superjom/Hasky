@@ -38,3 +38,36 @@ TEST(sigmoid_layer, forward) {
     layer.backward(param);
     LOG(INFO) << "backward loss:\t" << layer.param().loss;
 }
+
+TEST(sigmoid_layer, grad_check) {
+    SigmoidLayer<float> layer;
+    shape_t shape(10, 10);
+    layer.set_name("sigmoid-layer");
+    vector<shape_t> shapes = {shape};
+    layer.setup(shapes);
+
+    SigmoidLayer<float>::param_t param;
+    auto& bottom_z = param.z;
+    auto& loss = param.loss;
+    bottom_z.init(10);
+    loss.init(10);
+
+    for (int index = 0; index < 10; index++) {
+        bottom_z.clear(); 
+        loss.clear();
+        bottom_z[index] = 1. + EPISILON;
+        layer.forward(param);
+        float right = layer.param().z[index];
+
+        bottom_z[index] = 1. - EPISILON;
+        layer.forward(param);
+        float left = layer.param().z[index];
+       
+        loss[index] = 1.;
+        layer.backward(param);
+        float target = layer.param().loss[index];
+
+        ASSERT_TRUE(
+            grad_check(left, right, target));
+    }
+}

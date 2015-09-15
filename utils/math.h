@@ -23,3 +23,10 @@ inline T diff_tanh(T tanhx) {
     return 1. - tanhx * tanhx;
 }
 
+template<typename T>
+bool grad_check(T l, T r, T t) {
+    T g = (r - l) / (2. * EPISILON);
+    LOG(INFO) << "grad check:\t" << g << "\t->\t" << t;
+    return g > (t - 20. * EPISILON) && 
+           g < (t + 20. * EPISILON);
+}

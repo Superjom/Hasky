@@ -1,6 +1,6 @@
 #pragma once
 /*
- * sigmoid_layer.h
+ * map_layer.h
  *
  *  Created on: Sep 13, 2015
  *      Author: Superjom
@@ -80,3 +80,28 @@ public:
         }
     }
 };  // end SigmoidLayer
+
+template<typename T>
+class TanhLayer : public MapLayer<T>
+{
+public:
+    typedef typename MapLayer<T>::param_t param_t;
+
+    virtual void forward(param_t& bottom_) {
+        auto& bottom = bottom_.z;
+        auto& top = this->param().z;
+        CHECK_EQ(bottom.size(), top.size());
+        for (int i = 0; i < top.size(); i ++) {
+            top[i] = tanh<T>(bottom[i]);
+        }
+    }
+
+    virtual void backward(param_t& top_) {
+        auto& bottom = this->param().loss;
+        auto& z = this->param().z;
+        auto& top = top_.loss;
+        for (int i = 0; i < top.size(); i ++) {
+            bottom[i] = diff_tanh<T>(z[i]) * top[i];
+        }
+    }
+};
