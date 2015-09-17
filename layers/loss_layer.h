@@ -52,11 +52,7 @@ public:
     }
 
     virtual void backward(param_t& top_) {
-        /*
-        T z = this->param().z[0];
-        auto& loss = this->param().loss;
-        loss[0] =  2. * sqrt(z);
-        */
+        backward();
     }
 
     void backward() {

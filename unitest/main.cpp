@@ -8,6 +8,7 @@
 #include "layers/sigmoid_layer.h"
 #include "layers/tanh_layer.h"
 #include "layers/loss_layer.h"
+#include "layers/data_layer.h"
 
 int main(int argc, char **argv) {  
 

@@ -51,30 +51,28 @@ public:
      * top: top loss
      * bottom: bottom input
      */
-    virtual void backward(param_t& top_) {
+    virtual void backward(param_t& top, param_t& bottom) {
         // update x
-        auto& top = top_.loss;
-        auto& bottom = this->param().loss;
-        bottom.clear();
-        auto& w = this->param().w;
-        CHECK_EQ(top.size(), w.size());
-        CHECK_EQ(bottom.size(), w[0].size());
+        auto& param = this->param();
+        param.loss.clear();
+        auto& w = param.w;
+        CHECK_EQ(top.loss.size(), w.size());
+        CHECK_EQ(bottom.z.size(), w[0].size());
         // TODO assert loss == 0 ? 
-        for (int i = 0; i < bottom.size(); i++) {
-            for (int j = 0; j < top.size(); j++) {
+        for (int i = 0; i < param.loss.size(); i++) {
+            for (int j = 0; j < top.loss.size(); j++) {
                 // TODO assign loss or accumulate loss ? 
-                bottom[i] += w[j][i] * top[j];
+                param.loss[i] += w[j][i] * top.loss[j];
+                //LOG(INFO) << "loss" << i << "\t" << param.loss[i] << "\tw" << j << i << "\t" << w[j][i] << "\ttop.loss" << j << "\t" << top.loss[j];
             }
         }
         // update weight
         // TODO update weight !
-        /*
-        for (int i = 0; i < bottom.size(); i++) {
-            for (int j = 0; j < top.size(); j++) {
-                w[j][i] -= this->learning_rate * bottom[i];
+        for (int i = 0; i < bottom.z.size(); i++) {
+            for (int j = 0; j < top.loss.size(); j++) {
+                w[j][i] -= this->learning_rate * top.loss[j] * bottom.z[i];
             }
         }
-        */
     }
 
     virtual void update() {
