@@ -40,7 +40,7 @@ public:
         CHECK( ! name.empty());
         _name = name; 
     }
-
+    virtual void setup(const shape_t& shape) { }
     virtual void setup(cvshape_t& shapes) { }
     virtual void forward(param_t& bottom) { }
     /*
@@ -60,18 +60,16 @@ public:
     const param_t& param() const { return _param; }
     
     void set_top_layer(layer_t* top) {
-        _top_layer = top;
+        this->_top_layer = top;
     }
     void set_bottom_layer(layer_t* bottom) {
-        _bottom_layer = bottom;
+        this->_bottom_layer = bottom;
     }
-    layer_t& top_layer() { 
-        CHECK_NE(_top_layer, nullptr);
-        return *_top_layer; 
+    layer_t* top_layer() { 
+        return this->_top_layer; 
     }
-    layer_t& bottom_layer() { 
-        CHECK_NE(_bottom_layer, nullptr);
-        return *_bottom_layer; 
+    layer_t* bottom_layer() { 
+        return this->_bottom_layer; 
     }
     virtual ~Layer() { }
 
@@ -81,12 +79,21 @@ public:
         return _gaus_dist;
     }
 
+    layer_kind_t kind() {
+        return _kind;
+    }
+
+    void set_kind(layer_kind_t kind) {
+        _kind = kind;
+    }
+
 private:
     string _name;
     param_t _param;
     layer_t* _top_layer = nullptr; 
     layer_t* _bottom_layer = nullptr;
     GaussianDistrib<T> _gaus_dist;
+    layer_kind_t _kind;
 };
 template<typename T>
 const float Layer<T>::learning_rate = 0.02;

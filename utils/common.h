@@ -23,6 +23,12 @@ typedef const vector<shape_t>   cvshape_t;
 
 const float EPISILON = 1e-4;
 
+enum layer_kind_t {
+    HIDDEN_LAYER,
+    INPUT_LAYER,
+    OUTPUT_LAYER
+};
+
 struct shape_t {
     uint size = -1;
     uint width = -1;

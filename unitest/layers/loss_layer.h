@@ -34,6 +34,6 @@ TEST(LossLayer, backward) {
     param.z[0] = 0.5;
     layer.forward(param);
 
-    layer.backward();
+    layer.backward(param);
     ASSERT_EQ(-1., layer.param().loss[0]);
 }

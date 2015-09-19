@@ -12,3 +12,4 @@
 #include "mat.h"
 #include "random.h"
 #include "math.h"
+#include "string.h"

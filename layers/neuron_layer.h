@@ -15,13 +15,15 @@ public:
     typedef typename Layer<T>::vec_t    vec_t;
     typedef typename Layer<T>::param_t  param_t;
 
-    NeuronLayer<T>() { }
+    NeuronLayer<T>() { 
+        this->set_kind(HIDDEN_LAYER);
+    }
 
-    virtual void setup(cvshape_t& shapes) {
+    void setup(const shape_t &shape) {
         CHECK(!this->name().empty()) << "should set layer's name before setup";
         LOG(WARNING) << "construct NeuronLayer [" << this->name() << "]";
-        LOG(WARNING) << "*\tshape:\t" << shapes[0];
-        const auto& shape = shapes[0];
+        LOG(WARNING) << "*\tshape:\t" << shape;
+        //const auto& shape = shapes[0];
         // construct parameter
         CHECK(this->param().w.empty());
         this->param().w.set_shape(shape);
@@ -30,6 +32,10 @@ public:
         // random init
         for (auto& vec : this->param().w.data()) 
             this->gaus_dist().fill(vec);
+    }
+    
+    virtual void setup(cvshape_t& shapes) {
+        setup(shapes[0]);
     }
     /*
      * from bottom's z to top's z
@@ -54,10 +60,11 @@ public:
     virtual void backward(param_t& top, param_t& bottom) {
         // update x
         auto& param = this->param();
-        param.loss.clear();
         auto& w = param.w;
         CHECK_EQ(top.loss.size(), w.size());
         CHECK_EQ(bottom.z.size(), w[0].size());
+
+        param.loss.clear();
         // TODO assert loss == 0 ? 
         for (int i = 0; i < param.loss.size(); i++) {
             for (int j = 0; j < top.loss.size(); j++) {

@@ -35,7 +35,7 @@ TEST(tanh_layer, forward) {
     layer.forward(param);
     LOG(INFO) << "forward z:\t" << layer.param().z;
 
-    layer.backward(param);
+    layer.backward(param, param);
     LOG(INFO) << "backward loss:\t" << layer.param().loss;
 }
 

@@ -35,7 +35,7 @@ TEST(sigmoid_layer, forward) {
     layer.forward(param);
     LOG(INFO) << "forward z:\t" << layer.param().z;
 
-    layer.backward(param);
+    layer.backward(param, param);
     LOG(INFO) << "backward loss:\t" << layer.param().loss;
 }
 
@@ -64,7 +64,7 @@ TEST(sigmoid_layer, grad_check) {
         float left = layer.param().z[index];
        
         loss[index] = 1.;
-        layer.backward(param);
+        layer.backward(param, param);
         float target = layer.param().loss[index];
 
         ASSERT_TRUE(

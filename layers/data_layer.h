@@ -15,7 +15,9 @@ public:
     typedef typename Layer<T>::vec_t    vec_t;
     typedef typename Layer<T>::param_t  param_t;
 
-    DataLayer() { }
+    DataLayer() { 
+        this->set_kind(INPUT_LAYER);
+    }
 
     void setup(int size) {
         auto& param = this->param();
