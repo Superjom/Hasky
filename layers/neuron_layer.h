@@ -43,8 +43,8 @@ public:
     virtual void forward(param_t& bottom_) {
         auto& bottom = bottom_.z;
         auto& top = this->param().z;
-        CHECK(! bottom.empty());
-        CHECK(! top.empty());
+        CHECK(! bottom.empty()) << this->name();
+        CHECK(! top.empty()) << this->name();
         // shape check
         CHECK_EQ(top.size(), this->param().w.size());
         CHECK_EQ(bottom.size(), this->param().w[0].size());

@@ -56,8 +56,8 @@ public:
      */
     virtual void update() = 0;
 
-    param_t& param() { return _param; }
-    const param_t& param() const { return _param; }
+    virtual param_t& param() { return _param; }
+    virtual const param_t& param() const { return _param; }
     
     void set_top_layer(layer_t* top) {
         this->_top_layer = top;

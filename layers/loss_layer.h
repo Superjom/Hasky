@@ -16,7 +16,7 @@ public:
     typedef typename Layer<T>::param_t  param_t;
 
     LossLayer() { 
-        this->set_kind(HIDDEN_LAYER);
+        this->set_kind(OUTPUT_LAYER);
     }
     /*
      * set loss's size

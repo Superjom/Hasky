@@ -20,6 +20,9 @@ public:
     }
 
     void setup(int size) {
+        CHECK(!this->name().empty()) << "should set layer's name before setup";
+        LOG(WARNING) << "construct NeuronLayer [" << this->name() << "]";
+        LOG(WARNING) << "*\tshape:\t" << size;
         auto& param = this->param();
         param.z.init(size);
     }

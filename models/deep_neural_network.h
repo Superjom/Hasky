@@ -36,32 +36,43 @@ public:
         }
         layers[1]->set_bottom_layer(&data_layer);
         layers[layers.size()-1]->set_top_layer(&rmse_loss_layer);
+        rmse_loss_layer.set_bottom_layer(layers[layers.size()-1].get());
     }
 
     float learn(vec_t& vec, T label) {
         rmse_loss_layer.param().label[0] = label;
         data_layer.forward(vec);
-        Layer<T>* layer = layers[0];
+        LOG(INFO) << data_layer.name() << "\t>>\t" << data_layer.param().z;
+        Layer<T>* layer = layers[1].get();
         // forward
+        DLOG(INFO) << "forward ...";
         while(layer != nullptr) {
-            layer->forward(layer->bottom_layer().param());
+            CHECK(layer->bottom_layer() != nullptr) << layer->name();
+            DLOG(INFO) << ".. layer." << layer->name() << " forward from\t" << layer->bottom_layer()->name();
+            CHECK(layer->bottom_layer() != nullptr) << layer->name();
+            layer->forward(layer->bottom_layer()->param());
+            LOG(INFO) << layer->name() << "\t>>\t" << layer->param().z;
+            if (layer->kind() == OUTPUT_LAYER) break;
+            if (layer->kind() == HIDDEN_LAYER) layer = layer->top_layer();
         }
-        if (layer->kind() == HIDDEN_LAYER) layer = layer->top_layer();
+        DLOG(INFO) << "backward ...";
         // backward
-        rmse_loss_layer.backward();
-        layer = layers[ layers.size() - 1];
+        rmse_loss_layer.backward(layers[layers.size()-1]->param());
+        layer = layers[ layers.size() - 1].get();
         while (layer != nullptr) {
             if (layer->kind() != INPUT_LAYER) 
             {
-                CHECK_NE(layer->top_layer(), nullptr);
-                CHECK_NE(layer->bottom_layer(), nullptr);
+                CHECK(layer->top_layer() != nullptr) << layer->name();
+                CHECK(layer->bottom_layer() != nullptr) << layer->name();
                 layer->backward(
                     layer->top_layer()->param(), 
                     layer->bottom_layer()->param());
+                DLOG(INFO) << ".. layer." << layer->name() << " backward from\t" << layer->top_layer()->name();
+                LOG(INFO) << layer->name() << "\t>>\t" << layer->param().loss;
             }
             if (layer->kind() == HIDDEN_LAYER) layer = layer->bottom_layer();
         }
-        auto loss = rmse_loss_layer.z[0];
+        auto loss = rmse_loss_layer.param().z[0];
         return loss;
     }
 
@@ -70,7 +81,7 @@ public:
     }
 protected:
     void setup_input_layer(int size) {
-        data_layer.set_name("data");
+        data_layer.set_name("INPUT");
         data_layer.setup(size);
     }
     /*

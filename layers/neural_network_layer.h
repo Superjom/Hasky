@@ -50,6 +50,11 @@ public:
         neuron_layer.backward(tanh_layer.param(), bottom);
     }
 
+    virtual param_t& param() { return tanh_layer.param(); }
+    virtual const param_t& param() const {
+        return tanh_layer.param();
+    }
+
     void update() { }
 
 private:
