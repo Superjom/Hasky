@@ -38,6 +38,9 @@ public:
         // set relationship
         neuron_layer.set_top_layer(&tanh_layer);
         tanh_layer.set_bottom_layer(&neuron_layer);
+        // set neural networks param
+        this->param().set_z(tanh_layer.param().z_());
+        this->param().set_loss(neuron_layer.param().loss_());
     }
 
     virtual void forward(param_t& bottom) {
@@ -48,11 +51,6 @@ public:
     virtual void backward(param_t& top, param_t& bottom) {
         tanh_layer.backward(top, neuron_layer.param());
         neuron_layer.backward(tanh_layer.param(), bottom);
-    }
-
-    virtual param_t& param() { return tanh_layer.param(); }
-    virtual const param_t& param() const {
-        return tanh_layer.param();
     }
 
     void update() { }

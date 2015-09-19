@@ -10,9 +10,9 @@ TEST(neuron_layer, setup) {
     layer.gaus_dist().init(0, 0.5);
     shape_t shape(2, 3);
     layer.set_name("ne-layer");
-    vector<shape_t> shapes = {shape};
-    layer.setup(shapes);
-    ASSERT_EQ(layer.param().w.size(), shape.size);
+    //vector<shape_t> shapes = {shape};
+    layer.setup(shape);
+    ASSERT_EQ(layer.param().w().size(), shape.size);
 }
 TEST(neuron_layer, forward) {
     NeuronLayer<float> layer;
@@ -24,20 +24,20 @@ TEST(neuron_layer, forward) {
     layer.setup(shapes);
     LOG(INFO) << "forward ..";
     NeuronLayer<float>::param_t bottom_;
-    auto& bottom = bottom_.z;
+    auto& bottom = bottom_.z();
     bottom.init(3);
     bottom[0] = 1;
     bottom[1] = 2;
     bottom[2] = 3;
    
     for (int i = 0; i < shape.size; i++) {
-        LOG(INFO) << "param:\tw" << i << "\t"  << layer.param().w[i];
+        LOG(INFO) << "param:\tw" << i << "\t"  << layer.param().w()[i];
     }
 
     layer.forward(bottom_);
 
     for (int i = 0; i < shape.size; i++) {
-        LOG(INFO) << "z:\t" <<i << "\t" << layer.param().z[i];
+        LOG(INFO) << "z:\t" <<i << "\t" << layer.param().z()[i];
     }
 }
 
@@ -52,24 +52,24 @@ public:
     }
     float forward(NeuronLayer<float>::param_t &input) {
         logistic_layer.forward(input);
-        return logistic_layer.param().z[0];
+        return logistic_layer.param().z()[0];
     }
     float backward(NeuronLayer<float>::param_t &bottom, int id) {
         NeuronLayer<float>::param_t top;
-        top.loss.init(1);
-        top.loss[0] = 1.;
+        top.loss().init(1);
+        top.loss()[0] = 1.;
         logistic_layer.backward(top, bottom);
         //LOG(INFO) << "backward, loss:\t" << logistic_layer.param().loss;
-        return logistic_layer.param().loss[id];
+        return logistic_layer.param().loss()[id];
     }
     bool test_loss_grad_check(int id) {
         NeuronLayer<float>::param_t bottom;
-        bottom.z.init(size);
-        bottom.z[id] = 1. - EPISILON;
+        bottom.z().init(size);
+        bottom.z()[id] = 1. - EPISILON;
         float left = forward(bottom);
-        bottom.z[id] = 1. + EPISILON;
+        bottom.z()[id] = 1. + EPISILON;
         float right = forward(bottom);
-        bottom.z[id] = 1.;
+        bottom.z()[id] = 1.;
         float target = backward(bottom, id);
         return grad_check(left, right, target);
     }
@@ -85,12 +85,12 @@ TEST(NeuronLayer, logistic_loss_grad_check) {
 }
 
 void __neuron_weight_clear_and_set(NeuronLayer<float>::param_t &param, int size_id, int width_id, float v) {
-    for(int i = 0; i < param.w.size(); i++) {
-        for (int j = 0; j < param.w[0].size(); j++) {
+    for(int i = 0; i < param.w().size(); i++) {
+        for (int j = 0; j < param.w()[0].size(); j++) {
             if (i == size_id && j == width_id) {
-                param.w[i][j] = v;
+                param.w()[i][j] = v;
             } else {
-                param.w[i][j] = 0.;
+                param.w()[i][j] = 0.;
             }
         }
     }
@@ -104,24 +104,24 @@ public:
         logistic_layer.gaus_dist().init(0., .7);
         logistic_layer.setup(logistic_shapes);
         // init input
-        input_param.z.init(size);
+        input_param.z().init(size);
         for (int i = 0; i < size; i++) {
-            input_param.z[i] = .1 * i;
+            input_param.z()[i] = .1 * i;
         }
-        input_param.loss.init(1);
+        input_param.loss().init(1);
     }
 
     float forward(int size_id, int width_id, float v) {
         __neuron_weight_clear_and_set(logistic_layer.param(), size_id, width_id, v);
         logistic_layer.forward(input_param);
-        return logistic_layer.param().z[0];
+        return logistic_layer.param().z()[0];
     }
 
     float backward(int size_id, int width_id, float v) {
         __neuron_weight_clear_and_set(logistic_layer.param(), size_id, width_id, v);
-        input_param.loss[0] = 1.;
+        input_param.loss()[0] = 1.;
         logistic_layer.backward(input_param, input_param);
-        return logistic_layer.param().w[size_id][width_id];
+        return logistic_layer.param().w()[size_id][width_id];
     }
 
     void test_weight() {
@@ -171,33 +171,33 @@ public:
 
     float loss_forward(int input_id, float v) {
         param_t param;    
-        param.z.init(neuron_shape.width);
-        param.z[input_id] = v;
+        param.z().init(neuron_shape.width);
+        param.z()[input_id] = v;
         neuron_layer.forward(param);
         logistic_layer.forward(neuron_layer.param());
-        return logistic_layer.param().z[0];
+        return logistic_layer.param().z()[0];
     }
 
     float weight_forward(int size_id, int width_id, float v) {
         param_t param;    
-        param.z.init(neuron_shape.width);
+        param.z().init(neuron_shape.width);
         for (int i = 0; i < neuron_shape.width; i++) {
-            param.z[i] = i * 0.1;
+            param.z()[i] = i * 0.1;
         }
         __neuron_weight_clear_and_set(neuron_layer.param(), size_id, width_id, v);
         neuron_layer.forward(param);
         logistic_layer.forward(neuron_layer.param());
-        return logistic_layer.param().z[0];
+        return logistic_layer.param().z()[0];
     }
 
     float loss_backward(int input_id) {
         param_t param;
-        param.loss.init(1);
-        param.loss[0] = 1.;
+        param.loss().init(1);
+        param.loss()[0] = 1.;
 
         param_t bparam;
-        bparam.z.init(neuron_shape.width);
-        bparam.z[input_id] = 1.;
+        bparam.z().init(neuron_shape.width);
+        bparam.z()[input_id] = 1.;
 
         neuron_layer.forward(bparam);
         logistic_layer.forward(neuron_layer.param());
@@ -205,7 +205,7 @@ public:
         logistic_layer.backward(param, neuron_layer.param());
 
         neuron_layer.backward(logistic_layer.param(), bparam);
-        return neuron_layer.param().loss[input_id];
+        return neuron_layer.param().loss()[input_id];
         //return (1. - neuron_layer.param().loss[input_id]) / neuron_layer.learning_rate;
     }
 
@@ -213,19 +213,19 @@ public:
         __neuron_weight_clear_and_set(neuron_layer.param(), size_id, width_id, v);
         // init top
         param_t param;
-        param.loss.init(1);
-        param.loss[0] = 1.;
+        param.loss().init(1);
+        param.loss()[0] = 1.;
 
         param_t bparam;
-        bparam.z.init(neuron_shape.width);
+        bparam.z().init(neuron_shape.width);
         for (int i = 0; i < neuron_shape.width; i++) {
-            bparam.z[i] = i * 0.1;
+            bparam.z()[i] = i * 0.1;
         }
         neuron_layer.forward(bparam);
 
         logistic_layer.backward(param, neuron_layer.param());
         neuron_layer.backward(logistic_layer.param(), bparam);
-        return (1. - neuron_layer.param().w[size_id][width_id]) / neuron_layer.learning_rate;
+        return (1. - neuron_layer.param().w()[size_id][width_id]) / neuron_layer.learning_rate;
     }
 
     void test_loss_grad_check() {

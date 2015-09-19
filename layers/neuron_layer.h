@@ -25,12 +25,12 @@ public:
         LOG(WARNING) << "*\tshape:\t" << shape;
         //const auto& shape = shapes[0];
         // construct parameter
-        CHECK(this->param().w.empty());
-        this->param().w.set_shape(shape);
-        this->param().z.init(shape.size);
-        this->param().loss.init(shape.width);
+        //CHECK(this->param().w.empty());
+        this->param().w().set_shape(shape);
+        this->param().z().init(shape.size);
+        this->param().loss().init(shape.width);
         // random init
-        for (auto& vec : this->param().w.data()) 
+        for (auto& vec : this->param().w().data()) 
             this->gaus_dist().fill(vec);
     }
     
@@ -41,16 +41,16 @@ public:
      * from bottom's z to top's z
      */
     virtual void forward(param_t& bottom_) {
-        auto& bottom = bottom_.z;
-        auto& top = this->param().z;
+        auto& bottom = bottom_.z();
+        auto& top = this->param().z();
         CHECK(! bottom.empty()) << this->name();
         CHECK(! top.empty()) << this->name();
         // shape check
-        CHECK_EQ(top.size(), this->param().w.size());
-        CHECK_EQ(bottom.size(), this->param().w[0].size());
+        CHECK_EQ(top.size(), this->param().w().size());
+        CHECK_EQ(bottom.size(), this->param().w()[0].size());
         // compute
         for(int i = 0; i < top.size(); i++) {
-            top[i] = bottom.dot( this->param().w[i]);
+            top[i] = bottom.dot( this->param().w()[i]);
         }
     }
     /*
@@ -60,24 +60,24 @@ public:
     virtual void backward(param_t& top, param_t& bottom) {
         // update x
         auto& param = this->param();
-        auto& w = param.w;
-        CHECK_EQ(top.loss.size(), w.size());
-        CHECK_EQ(bottom.z.size(), w[0].size());
+        auto& w = param.w();
+        CHECK_EQ(top.loss().size(), w.size());
+        CHECK_EQ(bottom.z().size(), w[0].size());
 
-        param.loss.clear();
+        param.loss().clear();
         // TODO assert loss == 0 ? 
-        for (int i = 0; i < param.loss.size(); i++) {
-            for (int j = 0; j < top.loss.size(); j++) {
+        for (int i = 0; i < param.loss().size(); i++) {
+            for (int j = 0; j < top.loss().size(); j++) {
                 // TODO assign loss or accumulate loss ? 
-                param.loss[i] += w[j][i] * top.loss[j];
+                param.loss()[i] += w[j][i] * top.loss()[j];
                 //LOG(INFO) << "loss" << i << "\t" << param.loss[i] << "\tw" << j << i << "\t" << w[j][i] << "\ttop.loss" << j << "\t" << top.loss[j];
             }
         }
         // update weight
         // TODO update weight !
-        for (int i = 0; i < bottom.z.size(); i++) {
-            for (int j = 0; j < top.loss.size(); j++) {
-                w[j][i] -= this->learning_rate * top.loss[j] * bottom.z[i];
+        for (int i = 0; i < bottom.z().size(); i++) {
+            for (int j = 0; j < top.loss().size(); j++) {
+                w[j][i] -= this->learning_rate * top.loss()[j] * bottom.z()[i];
             }
         }
     }

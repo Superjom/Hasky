@@ -10,9 +10,9 @@ TEST(sigmoid_layer, setup) {
     layer.set_name("sigmoid-layer");
     vector<shape_t> shapes = {shape};
     layer.setup(shapes);
-    ASSERT_TRUE(layer.param().w.empty());
-    ASSERT_EQ(layer.param().z.size(), shape.size);
-    ASSERT_EQ(layer.param().loss.size(), shape.size);
+    ASSERT_TRUE(layer.param().w().empty());
+    ASSERT_EQ(layer.param().z().size(), shape.size);
+    ASSERT_EQ(layer.param().loss().size(), shape.size);
 }
 
 TEST(sigmoid_layer, forward) {
@@ -23,8 +23,8 @@ TEST(sigmoid_layer, forward) {
     layer.setup(shapes);
 
     SigmoidLayer<float>::param_t param;
-    auto& x = param.z;
-    auto& loss = param.loss;
+    auto& x = param.z();
+    auto& loss = param.loss();
     x.init(shape.size);
     loss.init(shape.size);
     for (int i = 0; i < shape.size; i++) {
@@ -33,10 +33,10 @@ TEST(sigmoid_layer, forward) {
     }
 
     layer.forward(param);
-    LOG(INFO) << "forward z:\t" << layer.param().z;
+    LOG(INFO) << "forward z:\t" << layer.param().z();
 
     layer.backward(param, param);
-    LOG(INFO) << "backward loss:\t" << layer.param().loss;
+    LOG(INFO) << "backward loss:\t" << layer.param().loss();
 }
 
 TEST(sigmoid_layer, grad_check) {
@@ -47,8 +47,8 @@ TEST(sigmoid_layer, grad_check) {
     layer.setup(shapes);
 
     SigmoidLayer<float>::param_t param;
-    auto& bottom_z = param.z;
-    auto& loss = param.loss;
+    auto& bottom_z = param.z();
+    auto& loss = param.loss();
     bottom_z.init(10);
     loss.init(10);
 
@@ -57,15 +57,15 @@ TEST(sigmoid_layer, grad_check) {
         loss.clear();
         bottom_z[index] = 1. + EPISILON;
         layer.forward(param);
-        float right = layer.param().z[index];
+        float right = layer.param().z()[index];
 
         bottom_z[index] = 1. - EPISILON;
         layer.forward(param);
-        float left = layer.param().z[index];
+        float left = layer.param().z()[index];
        
         loss[index] = 1.;
         layer.backward(param, param);
-        float target = layer.param().loss[index];
+        float target = layer.param().loss()[index];
 
         ASSERT_TRUE(
             grad_check(left, right, target));

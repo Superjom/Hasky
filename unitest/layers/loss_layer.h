@@ -13,13 +13,13 @@ TEST(LossLayer, forward) {
     vector<shape_t> shapes = { shape_t(1, 1)};
     layer.setup(shapes);
 
-    layer.param().label[0] = 1.;
+    layer.param().label()[0] = 1.;
     RMSELayer<float>::param_t param;
-    param.z.init(1);
-    param.z[0] = 0.5;
+    param.z().init(1);
+    param.z()[0] = 0.5;
 
     layer.forward(param);
-    ASSERT_EQ(0.25, layer.param().z[0]);
+    ASSERT_EQ(0.25, layer.param().z()[0]);
 }
 
 TEST(LossLayer, backward) {
@@ -28,12 +28,12 @@ TEST(LossLayer, backward) {
     vector<shape_t> shapes = { shape_t(1, 1)};
     layer.setup(shapes);
 
-    layer.param().label[0] = 1.;
+    layer.param().label()[0] = 1.;
     RMSELayer<float>::param_t param;
-    param.z.init(1);
-    param.z[0] = 0.5;
+    param.z().init(1);
+    param.z()[0] = 0.5;
     layer.forward(param);
 
     layer.backward(param);
-    ASSERT_EQ(-1., layer.param().loss[0]);
+    ASSERT_EQ(-1., layer.param().loss()[0]);
 }

@@ -24,12 +24,12 @@ public:
         LOG(WARNING) << "construct NeuronLayer [" << this->name() << "]";
         LOG(WARNING) << "*\tshape:\t" << size;
         auto& param = this->param();
-        param.z.init(size);
+        param.z().init(size);
     }
     void forward(const vec_t& input) {
         auto& param = this->param();
-        CHECK_EQ(input.size(), param.z.size());
-        param.z = input;
+        CHECK_EQ(input.size(), param.z().size());
+        param.z() = input;
     }
     virtual void setup(cvshape_t& shapes) {
     }

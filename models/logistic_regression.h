@@ -32,12 +32,12 @@ public:
     }
 
     float learn(vec_t& vec, T label) {
-        loss_layer.param().label[0] = label;
+        loss_layer.param().label()[0] = label;
         data_layer.forward(vec);
         neuron_layer.forward(data_layer.param());
         sigmoid_layer.forward(neuron_layer.param());
         loss_layer.forward(sigmoid_layer.param());
-        float loss = loss_layer.param().z[0];
+        float loss = loss_layer.param().z()[0];
         // backward
         loss_layer.backward(sigmoid_layer.param());
         sigmoid_layer.backward(loss_layer.param(), neuron_layer.param());
@@ -50,7 +50,7 @@ public:
         neuron_layer.forward(data_layer.param());
         sigmoid_layer.forward(neuron_layer.param());
         loss_layer.forward(sigmoid_layer.param());
-        return sigmoid_layer.param().z[0];
+        return sigmoid_layer.param().z()[0];
     }
 
 private:

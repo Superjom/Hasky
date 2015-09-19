@@ -40,9 +40,9 @@ public:
     }
 
     float learn(vec_t& vec, T label) {
-        rmse_loss_layer.param().label[0] = label;
+        rmse_loss_layer.param().label()[0] = label;
         data_layer.forward(vec);
-        LOG(INFO) << data_layer.name() << "\t>>\t" << data_layer.param().z;
+        LOG(INFO) << data_layer.name() << "\t>>\t" << data_layer.param().z();
         Layer<T>* layer = layers[1].get();
         // forward
         DLOG(INFO) << "forward ...";
@@ -51,7 +51,7 @@ public:
             DLOG(INFO) << ".. layer." << layer->name() << " forward from\t" << layer->bottom_layer()->name();
             CHECK(layer->bottom_layer() != nullptr) << layer->name();
             layer->forward(layer->bottom_layer()->param());
-            LOG(INFO) << layer->name() << "\t>>\t" << layer->param().z;
+            LOG(INFO) << layer->name() << "\t>>\t" << layer->param().z();
             if (layer->kind() == OUTPUT_LAYER) break;
             if (layer->kind() == HIDDEN_LAYER) layer = layer->top_layer();
         }
@@ -68,11 +68,11 @@ public:
                     layer->top_layer()->param(), 
                     layer->bottom_layer()->param());
                 DLOG(INFO) << ".. layer." << layer->name() << " backward from\t" << layer->top_layer()->name();
-                LOG(INFO) << layer->name() << "\t>>\t" << layer->param().loss;
-            }
-            if (layer->kind() == HIDDEN_LAYER) layer = layer->bottom_layer();
+                LOG(INFO) << layer->name() << "\t>>\t" << layer->param().loss();
+            } else break;
+            layer = layer->bottom_layer();
         }
-        auto loss = rmse_loss_layer.param().z[0];
+        auto loss = rmse_loss_layer.param().z()[0];
         return loss;
     }
 

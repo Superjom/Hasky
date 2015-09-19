@@ -25,8 +25,8 @@ public:
         CHECK(!this->name().empty()) << "should set layer's name before setup";
         LOG(WARNING) << "construct " << " [" << this->name() << "]";
         LOG(WARNING) << "*\tshape:\t" << shape;
-        auto& z = this->param().z;
-        auto& loss = this->param().loss;
+        auto& z = this->param().z();
+        auto& loss = this->param().loss();
         CHECK_GT(shape.size, 0);
         z.init(shape.size);
         loss.init(shape.size);
@@ -38,8 +38,8 @@ public:
     }
 
     virtual void forward(param_t& bottom_) {
-        auto& bottom = bottom_.z;
-        auto& z = this->param().z;
+        auto& bottom = bottom_.z();
+        auto& z = this->param().z();
         CHECK_EQ(bottom.size(), z.size());
         for (int i = 0; i < z.size(); i ++) {
             // TODO add map
@@ -61,8 +61,8 @@ public:
     typedef typename MapLayer<T>::param_t param_t;
 
     virtual void forward(param_t& bottom_) {
-        auto& bottom = bottom_.z;
-        auto& top = this->param().z;
+        auto& bottom = bottom_.z();
+        auto& top = this->param().z();
         CHECK_EQ(bottom.size(), top.size());
         for (int i = 0; i < top.size(); i ++) {
             top[i] = sigmoid<T>(bottom[i]);
@@ -70,9 +70,9 @@ public:
     }
 
     virtual void backward(param_t& top_, param_t& bottom) {
-        auto& top = top_.loss;
-        auto& z = bottom.z;
-        auto& loss = this->param().loss;
+        auto& top = top_.loss();
+        auto& z = bottom.z();
+        auto& loss = this->param().loss();
         CHECK_EQ(top.size(), loss.size());
         for (int i = 0; i < top.size(); i ++) {
             loss[i] = diff_sigmoid<T>(z[i]) * top[i];
@@ -87,8 +87,8 @@ public:
     typedef typename MapLayer<T>::param_t param_t;
 
     virtual void forward(param_t& bottom_) {
-        auto& bottom = bottom_.z;
-        auto& top = this->param().z;
+        auto& bottom = bottom_.z();
+        auto& top = this->param().z();
         CHECK_EQ(bottom.size(), top.size());
         for (int i = 0; i < top.size(); i ++) {
             top[i] = tanh<T>(bottom[i]);
@@ -96,9 +96,9 @@ public:
     }
 
     virtual void backward(param_t& top, param_t& bottom) {
-        auto& top_loss = top.loss;
-        auto& loss = this->param().loss;
-        auto& z = bottom.z;
+        auto& top_loss = top.loss();
+        auto& loss = this->param().loss();
+        auto& z = bottom.z();
         CHECK_EQ(top_loss.size(), loss.size());
         for (int i = 0; i < loss.size(); i ++) {
             loss[i] = diff_tanh<T>(z[i]) * top_loss[i];

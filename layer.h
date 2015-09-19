@@ -9,15 +9,58 @@
 #include "utils/all.h"
 
 template<typename T>
-struct LayerParam {
+class LayerParam {
+public:
     typedef T value_type;
     typedef DataFrame<T> df_t;
     typedef Vec<T> vec_t;
 
-    vec_t z;
-    vec_t loss;
-    vec_t label;    // used by loss layer
-    df_t w; 
+    vec_t& z() {
+        if(!_z) _z.reset(new vec_t);
+        return *_z;
+    }
+    shared_ptr<vec_t>& z_() {
+        return _z;
+    }
+    vec_t& loss() {
+        if(!_loss) _loss.reset(new vec_t);
+        return *_loss;
+    }
+    shared_ptr<vec_t>& loss_() {
+        return _loss;
+    }
+    shared_ptr<vec_t>& label_() {
+        return _label;
+    }
+    vec_t& label() {
+        if(!_label) _label.reset(new vec_t);
+        return *_label;
+    }
+    df_t& w() {
+        if(!_w) _w.reset(new df_t);
+        return *_w;
+    }
+    shared_ptr<df_t>& w_() {
+        return _w;
+    }
+    void set_z(shared_ptr<vec_t> z) {
+        _z = z;
+    }
+    void set_loss(shared_ptr<vec_t> loss) {
+        _loss = loss;
+    }
+    void set_label(shared_ptr<vec_t> label) {
+        _label = label;
+    }
+    void set_w(shared_ptr<vec_t> w) {
+        _w = w;
+    }
+
+private:
+    shared_ptr<vec_t> _z;
+    shared_ptr<vec_t> _loss;
+    shared_ptr<vec_t> _label;    // used by loss layer
+    shared_ptr<df_t> _w; 
     //DataFrame<value_type> bottom;
 };
 /*
@@ -56,8 +99,8 @@ public:
      */
     virtual void update() = 0;
 
-    virtual param_t& param() { return _param; }
-    virtual const param_t& param() const { return _param; }
+    param_t& param() { return _param; }
+    const param_t& param() const { return _param; }
     
     void set_top_layer(layer_t* top) {
         this->_top_layer = top;

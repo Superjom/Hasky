@@ -8,5 +8,5 @@ TEST(DataLayer, setup) {
     int index = 5;
     input[index] = .5;
     data_layer.forward(input);
-    CHECK_EQ(data_layer.param().z[index], .5);
+    CHECK_EQ(data_layer.param().z()[index], .5);
 }
