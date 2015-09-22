@@ -83,7 +83,9 @@ public:
         CHECK( ! name.empty());
         _name = name; 
     }
-    virtual void setup(const shape_t& shape) { }
+    virtual void setup(const shape_t& shape) { 
+        this->_shape = shape;
+    }
     virtual void setup(cvshape_t& shapes) { }
     virtual void forward(param_t& bottom) { }
     /*
@@ -129,6 +131,12 @@ public:
     void set_kind(layer_kind_t kind) {
         _kind = kind;
     }
+    const shape_t& shape() const {
+        return _shape;
+    }
+
+protected:
+    shape_t _shape;
 
 private:
     string _name;

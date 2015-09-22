@@ -10,7 +10,8 @@
 #include "layers/loss_layer.h"
 #include "layers/data_layer.h"
 #include "models/logistic_regression.h"
-#include "models/deep_neural_network.h"
+#include "layers/neural_network_layer.h"
+//#include "models/deep_neural_network.h"
 
 int main(int argc, char **argv) {  
 

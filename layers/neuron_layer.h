@@ -88,3 +88,4 @@ public:
     virtual ~NeuronLayer() { }
 
 };  // end class NeuronLayer
+

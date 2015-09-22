@@ -22,7 +22,7 @@ public:
         setup_output_layer(shape);
         // setup sigmoid layers and neuron layers
         layers.resize(sizes.size());
-        for (int i = 1; i < sizes.size(); i++) {
+        for (int i = 1; i < sizes.size() - 1; i++) {
             LOG(WARNING) << "-- setup " << i << "th layer";
             layers[i].reset(new NeuronNetworkLayer<T>);
             auto& layer = *layers[i];
@@ -34,28 +34,32 @@ public:
                 layers[i-1]->set_top_layer(layers[i].get());
             }
         }
+        layers[ layers.size() - 1].reset(new NeuronLayer<T>);
+        auto& layer = *layers[ layers.size() - 1];
+        layer.set_bottom_layer(layers[ layers.size() - 2].get());
         layers[1]->set_bottom_layer(&data_layer);
-        layers[layers.size()-1]->set_top_layer(&rmse_loss_layer);
+        layer.set_top_layer(&rmse_loss_layer);
         rmse_loss_layer.set_bottom_layer(layers[layers.size()-1].get());
     }
 
     float learn(vec_t& vec, T label) {
         rmse_loss_layer.param().label()[0] = label;
         data_layer.forward(vec);
-        LOG(INFO) << data_layer.name() << "\t>>\t" << data_layer.param().z();
+        //LOG(INFO) << data_layer.name() << "\t>>\t" << data_layer.param().z();
         Layer<T>* layer = layers[1].get();
         // forward
-        DLOG(INFO) << "forward ...";
+        //DLOG(INFO) << "forward ...";
         while(layer != nullptr) {
             CHECK(layer->bottom_layer() != nullptr) << layer->name();
-            DLOG(INFO) << ".. layer." << layer->name() << " forward from\t" << layer->bottom_layer()->name();
+            //DLOG(INFO) << ".. layer." << layer->name() << " forward from\t" << layer->bottom_layer()->name();
             CHECK(layer->bottom_layer() != nullptr) << layer->name();
             layer->forward(layer->bottom_layer()->param());
-            LOG(INFO) << layer->name() << "\t>>\t" << layer->param().z();
+            //LOG(INFO) << layer->name() << "\t>>\t" << layer->param().z();
             if (layer->kind() == OUTPUT_LAYER) break;
             if (layer->kind() == HIDDEN_LAYER) layer = layer->top_layer();
         }
-        DLOG(INFO) << "backward ...";
+        auto loss = rmse_loss_layer.param().z()[0];
+        //DLOG(INFO) << "backward ...";
         // backward
         rmse_loss_layer.backward(layers[layers.size()-1]->param());
         layer = layers[ layers.size() - 1].get();
@@ -67,12 +71,11 @@ public:
                 layer->backward(
                     layer->top_layer()->param(), 
                     layer->bottom_layer()->param());
-                DLOG(INFO) << ".. layer." << layer->name() << " backward from\t" << layer->top_layer()->name();
-                LOG(INFO) << layer->name() << "\t>>\t" << layer->param().loss();
+                //DLOG(INFO) << ".. layer." << layer->name() << " backward from\t" << layer->top_layer()->name();
+                //LOG(INFO) << layer->name() << "\t>>\t" << layer->param().loss();
             } else break;
             layer = layer->bottom_layer();
         }
-        auto loss = rmse_loss_layer.param().z()[0];
         return loss;
     }
 
