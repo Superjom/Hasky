@@ -98,7 +98,7 @@ public:
     virtual void backward(param_t& top, param_t& bottom) {
         auto& top_loss = top.loss();
         auto& loss = this->param().loss();
-        auto& z = bottom.z();
+        auto& z = this->param().z();
         CHECK_EQ(top_loss.size(), loss.size());
         for (int i = 0; i < loss.size(); i ++) {
             loss[i] = diff_tanh<T>(z[i]) * top_loss[i];

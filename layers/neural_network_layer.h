@@ -66,6 +66,7 @@ public:
 private:
     NeuronLayer<T> neuron_layer;
     TanhLayer<T> tanh_layer;
+    //SigmoidLayer<T> tanh_layer;
 };
 
 template<typename TT>
