@@ -1,8 +1,5 @@
 #pragma once
-#include "../layers/neuron_layer.h"
-#include "../layers/map_layer.h"
-#include "../layers/loss_layer.h"
-#include "../layers/neural_network_layer.h"
+#include "../layers/all.h"
 
 template<typename T>
 class DeepNeuralNetworks {

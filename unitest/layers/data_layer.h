@@ -1,4 +1,4 @@
-#include "../../layers/data_layer.h"
+#include "../../layers/all.h"
 
 TEST(DataLayer, setup) {
     DataLayer<float> data_layer;

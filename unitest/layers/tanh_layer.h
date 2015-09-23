@@ -1,8 +1,6 @@
 #include <climits>
 #include "gtest/gtest.h"
-//#include "../../layers/sigmoid_layer.h"
-//#include "../../layers/map_layer2.h"
-#include "../../layers/map_layer.h"
+#include "../../layers/all.h"
 
 TEST(tanh_layer, setup) {
     TanhLayer<float> layer;

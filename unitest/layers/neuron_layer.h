@@ -1,6 +1,6 @@
 #include <climits>
 #include "gtest/gtest.h"
-#include "../../layers/neuron_layer.h"
+#include "../../layers/all.h"
 
 TEST(neuron_layer, init) {
     NeuronLayer<float> _layer;

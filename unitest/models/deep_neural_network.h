@@ -16,7 +16,7 @@ TEST(DeepNeuralNetworks, learn) {
         input[i] = i * 0.1;
     }
     float loss;
-    for (int i = 0; i < 100; i ++) {
+    for (int i = 0; i < 200; i ++) {
         loss = model.learn(input, 1.);
         LOG(INFO) << i << "th "<< "loss:\t" << loss;
     }

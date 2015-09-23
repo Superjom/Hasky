@@ -1,4 +1,4 @@
-#include "../../layers/loss_layer.h"
+#include "../../layers/all.h"
 
 TEST(LossLayer, setup) {
     RMSELayer<float> layer; 

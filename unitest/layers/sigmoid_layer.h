@@ -2,7 +2,7 @@
 #include "gtest/gtest.h"
 //#include "../../layers/sigmoid_layer.h"
 //#include "../../layers/map_layer2.h"
-#include "../../layers/map_layer.h"
+#include "../../layers/all.h"
 
 TEST(sigmoid_layer, setup) {
     SigmoidLayer<float> layer;
