@@ -17,6 +17,7 @@ public:
 
     NeuronLayer<T>() { 
         this->set_kind(HIDDEN_LAYER);
+        REGISTER_LAYER("neural layer", NeuronLayer<T>)
     }
 
     void setup(const shape_t &shape) {
@@ -87,5 +88,8 @@ public:
 
     virtual ~NeuronLayer() { }
 
+private:
+    LAYER_INIT_INSIDE_CLASS
 };  // end class NeuronLayer
+LAYER_INIT_OUTSIDE_CLASS(NeuronLayer)
 

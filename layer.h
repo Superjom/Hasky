@@ -8,6 +8,51 @@
  */
 #include "utils/all.h"
 
+#define REGISTER_LAYER(name,layerkind) \
+        std::call_once(_global_once_flag, []{ \
+            global_layer_factory<T>().register_layer(name, \
+            []{ return new layerkind; }); \
+        }); 
+
+#define LAYER_INIT_INSIDE_CLASS \
+    static std::once_flag _global_once_flag;
+#define LAYER_INIT_OUTSIDE_CLASS(layerkind) \
+    template<typename T> \
+    std::once_flag layerkind<T>:: _global_once_flag;
+
+
+
+template<typename T>
+class LayerFactory {
+public:
+    typedef std::function<void()> handler_t;
+
+    handler_t& create_layer(const string& name) {
+        CHECK_NE(_types.count(name), 0);
+        return _types[name];
+    }
+
+    bool register_layer(const string& name, const handler_t &handle) {
+        LOG(WARNING) << "register layer type [" << name << "]";
+        bool not_exists = _types.count(name) == 0;
+        if (not_exists) {
+            _types[name] = handle;
+        }
+        return not_exists;
+    }
+
+private:
+    map<string, handler_t> _types;
+};
+//template<typename T>
+//map<string, typename LayerFactory<T>::handler_t> LayerFactory<T>::_types;
+
+template<typename T>
+static LayerFactory<T>& global_layer_factory() {
+    static LayerFactory<T> layerf;
+    return layerf;
+}
+
 template<typename T>
 class LayerParam {
 public:

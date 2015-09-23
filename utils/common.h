@@ -11,6 +11,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <random>
+#include <map>
+#include <thread>
 using namespace std;
 #include "glog/logging.h"
 #include "gtest/gtest.h"

@@ -17,6 +17,7 @@ public:
 
     DataLayer() { 
         this->set_kind(INPUT_LAYER);
+        REGISTER_LAYER("data layer", DataLayer<T>)
     }
 
     void setup(int size) {
@@ -40,4 +41,11 @@ public:
         CHECK(false) << "backwrard() is deleted";
     }
     virtual void update() { }
+
+private:
+    //static std::once_flag _global_once_flag;
+    LAYER_INIT_INSIDE_CLASS
 };
+//template<typename T>
+//std::once_flag DataLayer<T>:: _global_once_flag;
+LAYER_INIT_OUTSIDE_CLASS(DataLayer)
