@@ -22,9 +22,13 @@ public:
         setup_output_layer(shape);
         // setup sigmoid layers and neuron layers
         layers.resize(sizes.size());
-        for (int i = 1; i < sizes.size() - 1; i++) {
+        for (int i = 1; i < sizes.size(); i++) {
             LOG(WARNING) << "-- setup " << i << "th layer";
-            layers[i].reset(new NeuronNetworkLayer<T>);
+            if (i <= sizes.size() - 1) {
+                layers[i].reset(new NeuronNetworkLayer<T>);
+            } else {
+                layers[i].reset(new NeuronLayer<T>);
+            }
             auto& layer = *layers[i];
             layer.set_name(swift_snails::format_string("neuron-%d", i));
             shape = {sizes[i], sizes[i-1]};
@@ -34,9 +38,8 @@ public:
                 layers[i-1]->set_top_layer(layers[i].get());
             }
         }
-        layers[ layers.size() - 1].reset(new NeuronLayer<T>);
+        // relation
         auto& layer = *layers[ layers.size() - 1];
-        layer.set_bottom_layer(layers[ layers.size() - 2].get());
         layers[1]->set_bottom_layer(&data_layer);
         layer.set_top_layer(&rmse_loss_layer);
         rmse_loss_layer.set_bottom_layer(layers[layers.size()-1].get());

@@ -8,7 +8,7 @@ TEST(DeepNeuralNetworks, setup) {
 
 TEST(DeepNeuralNetworks, learn) {
     DeepNeuralNetworks<float> model;
-    vector<int> sizes = {10, 1};
+    vector<int> sizes = {10, 6, 1};
     model.setup(sizes);
     
     DeepNeuralNetworks<float>::vec_t input(10);
@@ -16,7 +16,7 @@ TEST(DeepNeuralNetworks, learn) {
         input[i] = i * 0.1;
     }
     float loss;
-    for (int i = 0; i < 2000; i ++) {
+    for (int i = 0; i < 100; i ++) {
         loss = model.learn(input, 1.);
         LOG(INFO) << i << "th "<< "loss:\t" << loss;
     }
