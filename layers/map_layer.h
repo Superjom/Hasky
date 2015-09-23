@@ -60,6 +60,10 @@ class SigmoidLayer : public MapLayer<T>
 public:
     typedef typename MapLayer<T>::param_t param_t;
 
+    SigmoidLayer() {
+        REGISTER_LAYER("sigmoid layer", SigmoidLayer<T>)
+    }
+
     virtual void forward(param_t& bottom_) {
         auto& bottom = bottom_.z();
         auto& top = this->param().z();
@@ -78,13 +82,19 @@ public:
             loss[i] = diff_sigmoid<T>(z[i]) * top[i];
         }
     }
+    LAYER_INIT_INSIDE_CLASS
 };  // end SigmoidLayer
+LAYER_INIT_OUTSIDE_CLASS(SigmoidLayer)
 
 template<typename T>
 class TanhLayer : public MapLayer<T>
 {
 public:
     typedef typename MapLayer<T>::param_t param_t;
+
+    TanhLayer() {
+        REGISTER_LAYER("tanh layer", TanhLayer)
+    }
 
     virtual void forward(param_t& bottom_) {
         auto& bottom = bottom_.z();
@@ -104,4 +114,8 @@ public:
             loss[i] = diff_tanh<T>(z[i]) * top_loss[i];
         }
     }
+
+private:
+    LAYER_INIT_INSIDE_CLASS
 };
+LAYER_INIT_OUTSIDE_CLASS(TanhLayer)

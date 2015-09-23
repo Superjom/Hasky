@@ -20,16 +20,16 @@
     template<typename T> \
     std::once_flag layerkind<T>:: _global_once_flag;
 
-
+template<typename T> class Layer;
 
 template<typename T>
 class LayerFactory {
 public:
-    typedef std::function<void()> handler_t;
+    typedef std::function<Layer<T>*()> handler_t;
 
-    handler_t& create_layer(const string& name) {
+    Layer<T>* create_layer(const string& name) {
         CHECK_NE(_types.count(name), 0);
-        return _types[name];
+        return _types[name]();
     }
 
     bool register_layer(const string& name, const handler_t &handle) {
@@ -38,6 +38,7 @@ public:
         if (not_exists) {
             _types[name] = handle;
         }
+        if (! not_exists) LOG(WARNING) << name << "has been registed!";
         return not_exists;
     }
 
@@ -123,6 +124,10 @@ public:
     typedef Layer<T> layer_t;
     typedef DataFrame<T> df_t;
 
+    Layer() {
+        gaus_dist().init(0, 0.7);
+    }
+
     const string& name() const { return _name; }
     void set_name(const string& name) { 
         CHECK( ! name.empty());
@@ -144,7 +149,7 @@ public:
     /*
      * add current layer's loss to it's parameter
      */
-    virtual void update() = 0;
+    virtual void update()  { }
 
     param_t& param() { return _param; }
     const param_t& param() const { return _param; }

@@ -17,7 +17,7 @@ public:
 
     NeuronLayer<T>() { 
         this->set_kind(HIDDEN_LAYER);
-        REGISTER_LAYER("neural layer", NeuronLayer<T>)
+        REGISTER_LAYER("neuron layer", NeuronLayer<T>)
     }
 
     void setup(const shape_t &shape) {

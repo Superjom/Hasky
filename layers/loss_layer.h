@@ -45,6 +45,10 @@ class RMSELayer : public LossLayer<T> {
 public:
     typedef typename LossLayer<T>::vec_t    vec_t;
     typedef typename LossLayer<T>::param_t  param_t;
+
+    RMSELayer() {
+        REGISTER_LAYER("RMSE loss layer", RMSELayer<T>)
+    }
     
     virtual void forward(param_t& bottom_) {
         auto& bottom_z = bottom_.z();
@@ -69,4 +73,7 @@ public:
     }
 
     virtual void update() { }
+
+    LAYER_INIT_INSIDE_CLASS
 };
+LAYER_INIT_OUTSIDE_CLASS(RMSELayer)

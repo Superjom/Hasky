@@ -21,6 +21,7 @@ public:
 
     NeuronNetworkLayer<T>() { 
         this->set_kind(HIDDEN_LAYER);
+        REGISTER_LAYER("neural network layer", NeuronNetworkLayer<T>)
     }
 
     void setup(const shape_t& shape_) {
@@ -67,7 +68,9 @@ private:
     NeuronLayer<T> neuron_layer;
     TanhLayer<T> tanh_layer;
     //SigmoidLayer<T> tanh_layer;
+    LAYER_INIT_INSIDE_CLASS
 };
+LAYER_INIT_OUTSIDE_CLASS(NeuronNetworkLayer)
 
 template<typename TT>
 class TestNeuralNetworkLayer : public TestLayer<TT> {
