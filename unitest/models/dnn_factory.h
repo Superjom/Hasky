@@ -14,6 +14,6 @@ TEST(DnnFactory, setup) {
     };
 
     fac.set_name("neuron factor");
-    fac.setup(shape_t(20, 1));
+    fac.setup(shape_t(1, 20));
     fac.setup(layers);
 }
